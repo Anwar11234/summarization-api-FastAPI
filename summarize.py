@@ -24,7 +24,7 @@ def load_model():
 async def summarize(data: Dict[str, str] = Body(...)):
     """Summarize a text using the loaded Peft model."""
     model , tokenizer = load_model()
-    
+
     text = data.get("text")
 
     # Check for missing text
@@ -41,5 +41,8 @@ async def summarize(data: Dict[str, str] = Body(...)):
     )
 
     summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    # Add Access-Control-Allow-Origin header manually
+    response = {"summary": summary}
+    response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:5500"  # Replace with your frontend origin
 
-    return {"summary": summary}
+    return response
