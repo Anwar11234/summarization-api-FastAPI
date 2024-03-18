@@ -11,17 +11,20 @@ app.add_middleware(
     allow_methods=["*"], allow_headers=["*"]
 )
 
-# Load the model outside the request handler for efficiency
-peft_model_id = "ANWAR101/lora-bart-base-youtube-cnn"
-config = PeftConfig.from_pretrained(peft_model_id)
-model = AutoModelForSeq2SeqLM.from_pretrained(config.base_model_name_or_path)
-tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
-model = PeftModel.from_pretrained(model, peft_model_id)
+def load_model():
+    peft_model_id = "ANWAR101/lora-bart-base-youtube-cnn"
+    config = PeftConfig.from_pretrained(peft_model_id)
+    model = AutoModelForSeq2SeqLM.from_pretrained(config.base_model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
+    model = PeftModel.from_pretrained(model, peft_model_id)
+    return model , tokenizer
 
 
 @app.post("/summarize")
 async def summarize(data: Dict[str, str] = Body(...)):
     """Summarize a text using the loaded Peft model."""
+    model , tokenizer = load_model()
+    
     text = data.get("text")
 
     # Check for missing text
