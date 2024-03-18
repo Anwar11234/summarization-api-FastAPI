@@ -1,5 +1,4 @@
 transformers==4.38.2
 peft==0.9.0
-flask
-flask_cors
+fastapi
 gunicorn
